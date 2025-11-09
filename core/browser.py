@@ -39,8 +39,112 @@ def iniciar_driver():
     return driver
 
 
+def extrair_username_logado(driver):
+    """Extrai o username da conta atualmente logada."""
+    try:
+        log.info("Extraindo username da conta logada...")
+        wait = WebDriverWait(driver, 10)
+
+        # Método 1: Procurar pelo link do perfil no header/topo
+        try:
+            # Aguardar um pouco para a página carregar completamente
+            import time
+            time.sleep(2)
+
+            # Procurar por links que contenham o username no header
+            header_links = driver.find_elements(By.CSS_SELECTOR, "header a[href^='/']")
+            for link in header_links:
+                href = link.get_attribute("href")
+                if href and href.startswith("https://www.instagram.com/"):
+                    username = href.replace("https://www.instagram.com/", "").rstrip("/")
+                    # Validar que é um username válido (não contém caracteres especiais de URL)
+                    if (username and
+                        len(username) >= 3 and
+                        len(username) <= 30 and
+                        username.replace("_", "").replace(".", "").isalnum() and
+                        not username.startswith("explore") and
+                        not username.startswith("reels") and
+                        not username.startswith("direct") and
+                        not "?" in username and
+                        not "%" in username):
+                        log.info(f"Username extraído: {username}")
+                        return username
+        except Exception as e:
+            log.warning(f"Erro no método 1: {e}")
+
+        # Método 2: Procurar na barra lateral ou menu
+        try:
+            sidebar_links = driver.find_elements(By.CSS_SELECTOR, "nav a[href^='/']")
+            for link in sidebar_links:
+                href = link.get_attribute("href")
+                if href and href.startswith("https://www.instagram.com/"):
+                    username = href.replace("https://www.instagram.com/", "").rstrip("/")
+                    if (username and
+                        len(username) >= 3 and
+                        len(username) <= 30 and
+                        username.replace("_", "").replace(".", "").isalnum() and
+                        not username.startswith("explore") and
+                        not username.startswith("reels") and
+                        not username.startswith("direct") and
+                        not "?" in username and
+                        not "%" in username):
+                        log.info(f"Username extraído (método 2): {username}")
+                        return username
+        except Exception as e:
+            log.warning(f"Erro no método 2: {e}")
+
+        # Método 3: Procurar por elementos com data-testid ou aria-label específicos
+        try:
+            profile_elements = driver.find_elements(By.CSS_SELECTOR, "[data-testid*='user-avatar'], [aria-label*='Seu perfil']")
+            for element in profile_elements:
+                # Procurar por links próximos
+                parent = element
+                for _ in range(3):  # Subir até 3 níveis
+                    parent = parent.find_element(By.XPATH, "..")
+                    links = parent.find_elements(By.TAG_NAME, "a")
+                    for link in links:
+                        href = link.get_attribute("href")
+                        if href and href.startswith("https://www.instagram.com/"):
+                            username = href.replace("https://www.instagram.com/", "").rstrip("/")
+                            if (username and
+                                len(username) >= 3 and
+                                len(username) <= 30 and
+                                username.replace("_", "").replace(".", "").isalnum() and
+                                not username.startswith("explore") and
+                                not username.startswith("reels") and
+                                not username.startswith("direct") and
+                                not "?" in username and
+                                not "%" in username):
+                                log.info(f"Username extraído (método 3): {username}")
+                                return username
+        except Exception as e:
+            log.warning(f"Erro no método 3: {e}")
+
+        # Método 4: Fallback - tentar encontrar por meta tags ou title
+        try:
+            title = driver.title
+            if "@" in title:
+                username = title.split("@")[1].split(" ")[0].strip("()")
+                if username and len(username) >= 3:
+                    log.info(f"Username extraído do título (método 4): {username}")
+                    return username
+        except Exception as e:
+            log.warning(f"Erro no método 4: {e}")
+
+        log.warning("Não foi possível extrair username automaticamente")
+        return None
+
+    except Exception as e:
+        log.error(f"Erro ao extrair username: {e}")
+        return None
+
+
 def fazer_login(driver, usuario, senha):
-    """Realiza o login no Instagram usando as credenciais fornecidas."""
+    """Realiza o login no Instagram usando as credenciais fornecidas.
+
+    Returns:
+        tuple: (sucesso: bool, username: str or None)
+    """
     log.info("Navegando para a página de login do Instagram...")
     driver.get("https://www.instagram.com/")
     log.info("Página carregada. Aguardando elementos de login...")
@@ -69,7 +173,7 @@ def fazer_login(driver, usuario, senha):
     log.info("Botão de login encontrado. Clicando...")
     pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="antes clicar login")
     botao_login.click()
-    
+
     # Verificar se o login foi bem-sucedido
     try:
         # Aguardar até que a URL mude para a página inicial ou um elemento pós-login apareça
@@ -79,10 +183,19 @@ def fazer_login(driver, usuario, senha):
             EC.presence_of_element_located((By.XPATH, "//a[@href='/']//div[@role='link']")) # Ícone da home
         )
         log.info("Login aparentemente bem-sucedido ou redirecionado para verificação.")
-        return True
+
+        # Extrair o username da conta logada
+        username_logado = extrair_username_logado(driver)
+        if username_logado:
+            log.info(f"Conta logada: {username_logado}")
+            return True, username_logado
+        else:
+            log.warning("Login bem-sucedido, mas não foi possível extrair o username")
+            return True, usuario  # Fallback: usar o username fornecido
+
     except Exception as e:
         log.error(f"Falha na verificação pós-login: {e}")
-        return False
+        return False, None
     finally:
         pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="após clicar login")
 

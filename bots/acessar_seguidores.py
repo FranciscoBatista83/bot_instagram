@@ -14,22 +14,38 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Bot para acessar e coletar seguidores do Instagram.")
     parser.add_argument("--user", required=True, help="Usuário do Instagram")
     parser.add_argument("--password", required=True, help="Senha do Instagram")
+    parser.add_argument("--username", required=True, help="Username da conta logada")
+    parser.add_argument("--max_followers", type=int, default=0, help="Número máximo de seguidores a extrair (0 = sem limite)")
     args = parser.parse_args()
 
     usuario = args.user
     senha = args.password
+    username_conta = args.username
+    max_followers = args.max_followers
 
-    log.info("Iniciando o bot para acessar e coletar seguidores...")
-    
+    # Arquivo específico da conta
+    arquivo_seguidores = f"seguidores_{username_conta}.txt"
+
+    log.info(f"Iniciando o bot para acessar e coletar seguidores da conta @{username_conta}...")
+
     if not usuario or not senha:
         log.error("Credenciais não fornecidas. Por favor, use --user e --password.")
-        sys.exit(1) # Sair com erro
+        sys.exit(1)
 
     driver = iniciar_driver()
     try:
-        if not fazer_login(driver, usuario, senha):
+        sucesso_login, username_logado = fazer_login(driver, usuario, senha)
+        if not sucesso_login:
             log.error("Falha no login. Verifique as credenciais e tente novamente.")
-            sys.exit(1) # Sair com erro
+            sys.exit(1)
+
+        # Verificar se o username logado corresponde ao esperado
+        if username_logado != username_conta:
+            log.warning(f"Username logado ({username_logado}) diferente do esperado ({username_conta}). Usando {username_logado}.")
+            username_conta = username_logado
+            arquivo_seguidores = f"seguidores_{username_conta}.txt"
+
+        log.info(f"Usando arquivo: {arquivo_seguidores}")
 
         log.info("Verificando se há modal de salvar informações...")
         clicar_agora_nao(driver)
@@ -50,13 +66,19 @@ if __name__ == "__main__":
         log.info("Extraindo URLs dos seguidores e atualizando arquivo...")
         urls_encontradas = extrair_urls_seguidores(driver)
 
+        # Aplicar limite máximo de seguidores se especificado
+        if max_followers > 0 and urls_encontradas:
+            urls_limitadas = urls_encontradas[:max_followers]
+            log.info(f"Aplicando limite: {len(urls_encontradas)} seguidores encontrados, mantendo apenas os primeiros {max_followers}")
+            urls_encontradas = urls_limitadas
+
         if urls_encontradas:
-            sucesso = gerenciar_arquivo_urls(urls_encontradas, "seguidores.txt")
+            sucesso = gerenciar_arquivo_urls(urls_encontradas, arquivo_seguidores)
             if sucesso:
-                log.info("URLs dos seguidores salvas com sucesso!")
+                log.info(f"URLs dos seguidores salvas em {arquivo_seguidores}!")
                 pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="após limpeza duplicatas")
                 log.info("Iniciando limpeza de duplicatas no arquivo...")
-                limpeza_sucesso = limpar_duplicatas_arquivo("seguidores.txt")
+                limpeza_sucesso = limpar_duplicatas_arquivo(arquivo_seguidores)
                 if limpeza_sucesso:
                     log.info("Limpeza de duplicatas concluída com sucesso!")
                 else:
@@ -69,7 +91,7 @@ if __name__ == "__main__":
         log.info("Coleta de seguidores concluída!")
     except Exception as e:
         log.error(f"Ocorreu um erro durante a execução: {e}")
-        sys.exit(1) # Sair com erro
+        sys.exit(1)
     finally:
         log.info("Fechando o navegador.")
         driver.quit()

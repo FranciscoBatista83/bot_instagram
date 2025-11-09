@@ -372,7 +372,7 @@ def visitar_perfil_especifico(driver, url_perfil):
     """Visita um perfil específico passando a URL diretamente."""
     return visitar_perfil(driver, url_perfil)
 
-def interagir_com_reels(driver, nome_arquivo="seguidores.txt"):
+def interagir_com_reels(driver, nome_arquivo="seguidores.txt", max_reels_per_profile=3):
     """Interage com reels de todos os perfis do arquivo em ordem: curte o primeiro reel se não estiver curtido."""
     try:
         log.info("Iniciando interação automática com reels de todos os perfis...")
@@ -397,7 +397,7 @@ def interagir_com_reels(driver, nome_arquivo="seguidores.txt"):
                 pausa(min_tempo=4, max_tempo=8, jitter=0.3, nome="aguarda carregar perfil")
 
                 # Tentar encontrar reels no perfil
-                reels_encontrados = encontrar_reels_perfil(driver)
+                reels_encontrados = encontrar_reels_perfil(driver, max_reels_per_profile)
 
                 if reels_encontrados:
                     # Pegar o primeiro reel
@@ -434,7 +434,7 @@ def interagir_com_reels(driver, nome_arquivo="seguidores.txt"):
         log.error(f"Erro geral na interação com reels: {e}")
         return False
 
-def encontrar_reels_perfil(driver):
+def encontrar_reels_perfil(driver, max_reels=3):
     """Encontra todos os reels visíveis em um perfil."""
     try:
         # Aguardar um pouco para o perfil carregar completamente
@@ -474,7 +474,11 @@ def encontrar_reels_perfil(driver):
             log.warning(f"Erro ao procurar reels método 2: {e}")
 
         log.info(f"Encontrados {len(reels)} reels no perfil.")
-        return reels[:3]  # Retornar no máximo 3 reels
+        # Se max_reels for 0, retornar todos os reels encontrados
+        if max_reels == 0:
+            return reels
+        else:
+            return reels[:max_reels]  # Retornar no máximo o limite especificado
 
     except Exception as e:
         log.error(f"Erro ao encontrar reels: {e}")
