@@ -1,0 +1,33 @@
+# Arquivos de log
+bot.log
+*.log
+
+# Variáveis de ambiente
+.env
+
+# Arquivos de dados gerados pelo bot
+seguidores.txt
+
+# Arquivos Python compilados/otimizados
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Ambientes virtuais
+env/
+venv/
+
+# Distribuição / empacotamento
+build/
+dist/
+*.egg-info/
+
+# Logs do instalador
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Relatórios de teste / cobertura
+.coverage
+.tox/
+.coverage.*
