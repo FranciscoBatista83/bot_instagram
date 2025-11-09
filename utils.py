@@ -22,5 +22,5 @@ def pausa(min_tempo=1.0, max_tempo=2.0, jitter=0.2, verbose=True, nome="personal
     duracao = round(base + variacao, 2)
     duracao = max(0, duracao)  # garante que não dá tempo negativo
     if verbose:
-        log.info(f"⏱️ Pausando por {duracao:.2f} segundos ({nome})...")
+        log.info(f"Pausando por {duracao:.2f} segundos ({nome})...") # Removido emoji
     time.sleep(duracao)

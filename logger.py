@@ -19,10 +19,12 @@ def setup_logger():
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    # Handler para o console
-    stream_handler = logging.StreamHandler(sys.stdout)
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
+    # Handler para o console (adicionado apenas se não houver um handler de texto personalizado)
+    # Isso evita duplicação de logs quando a GUI está ativa
+    if not any(isinstance(h, logging.Handler) and hasattr(h, 'textbox') for h in logger.handlers):
+        stream_handler = logging.StreamHandler(sys.stdout)
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
 
     return logger
 

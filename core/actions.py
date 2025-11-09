@@ -15,7 +15,7 @@ def clicar_meu_perfil(driver):
 
         # Método 1: Busca por imagem de perfil (mais confiável)
         try:
-            log.info("🔍 Método 1: Buscando por imagem de perfil...")
+            log.info("Metodo 1: Buscando por imagem de perfil...")
             imagens_perfil = driver.find_elements(By.CSS_SELECTOR, "img[alt*='Foto do perfil de']")
             for img in imagens_perfil:
                 try:
@@ -26,20 +26,20 @@ def clicar_meu_perfil(driver):
                         if link_pai.tag_name == "a" and link_pai.get_attribute("href"):
                             href = link_pai.get_attribute("href")
                             if href and href.startswith("https://www.instagram.com/") and not href.endswith("/explore/") and not href.endswith("/reels/"):
-                                log.info(f"✅ Link do perfil encontrado por imagem: {href}")
+                                log.info(f"Link do perfil encontrado por imagem: {href}")
                                 # Usar JavaScript click para maior confiabilidade
                                 driver.execute_script("arguments[0].click();", link_pai)
-                                log.info("✅ Perfil acessado com sucesso via JavaScript!")
+                                log.info("Perfil acessado com sucesso via JavaScript!")
                                 pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="após acessar perfil")
                                 return True
                 except:
                     continue
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 1: {e}")
+            log.warning(f"Erro no método 1: {e}")
 
         # Método 2: Busca por span com texto "Perfil"
         try:
-            log.info("🔍 Método 2: Buscando por span com texto 'Perfil'...")
+            log.info("Metodo 2: Buscando por span com texto 'Perfil'...")
             spans_perfil = driver.find_elements(By.XPATH, "//span[text()='Perfil']")
             for span in spans_perfil:
                 try:
@@ -50,20 +50,20 @@ def clicar_meu_perfil(driver):
                         if link_pai.tag_name == "a" and link_pai.get_attribute("href"):
                             href = link_pai.get_attribute("href")
                             if href and href.startswith("https://www.instagram.com/"):
-                                log.info(f"✅ Link do perfil encontrado por span: {href}")
+                                log.info(f"Link do perfil encontrado por span: {href}")
                                 # Usar JavaScript click
                                 driver.execute_script("arguments[0].click();", link_pai)
-                                log.info("✅ Perfil acessado com sucesso via JavaScript!")
+                                log.info("Perfil acessado com sucesso via JavaScript!")
                                 pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="curta")
                                 return True
                 except:
                     continue
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 2: {e}")
+            log.warning(f"Erro no método 2: {e}")
 
         # Método 3: Busca por links de perfil genéricos
         try:
-            log.info("🔍 Método 3: Buscando por links de perfil genéricos...")
+            log.info("Metodo 3: Buscando por links de perfil genéricos...")
             # Encontrar todos os links na barra lateral
             todos_links = driver.find_elements(By.CSS_SELECTOR, "a[href^='/']")
             for link in todos_links:
@@ -75,32 +75,32 @@ def clicar_meu_perfil(driver):
                         if (path and path != "/" and not path.startswith("explore/") and
                             not path.startswith("reels/") and not path.startswith("direct/") and
                             "/" not in path[1:] and len(path) > 1):  # Username válido
-                            log.info(f"✅ Link de perfil genérico encontrado: {href}")
+                            log.info(f"Link de perfil genérico encontrado: {href}")
                             # Usar JavaScript click
                             driver.execute_script("arguments[0].click();", link)
-                            log.info("✅ Perfil acessado com sucesso via JavaScript!")
+                            log.info("Perfil acessado com sucesso via JavaScript!")
                             pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="curta")
                             return True
                 except:
                     continue
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 3: {e}")
+            log.warning(f"Erro no método 3: {e}")
 
         # Método 4: Busca por XPath (fallback)
         try:
-            log.info("🔍 Método 4: Buscando por XPath (fallback)...")
+            log.info("Metodo 4: Buscando por XPath (fallback)...")
             wait = WebDriverWait(driver, 5)
             link_perfil = wait.until(EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Perfil')]")))
-            log.info("✅ Link do perfil encontrado por XPath")
+            log.info("Link do perfil encontrado por XPath")
             # Usar JavaScript click
             driver.execute_script("arguments[0].click();", link_perfil)
-            log.info("✅ Perfil acessado com sucesso via JavaScript!")
+            log.info("Perfil acessado com sucesso via JavaScript!")
             pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="curta")
             return True
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 4: {e}")
+            log.warning(f"Erro no método 4: {e}")
 
-        log.warning("❌ Não foi possível encontrar o link/botão do perfil após tentar todas as abordagens.")
+        log.warning("Nao foi possivel encontrar o link/botao do perfil apos tentar todas as abordagens.")
         return False
 
     except Exception as e:

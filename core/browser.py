@@ -69,8 +69,22 @@ def fazer_login(driver, usuario, senha):
     log.info("Botão de login encontrado. Clicando...")
     pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="antes clicar login")
     botao_login.click()
-    log.info("Login realizado com sucesso!")
-    pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="após clicar login")
+    
+    # Verificar se o login foi bem-sucedido
+    try:
+        # Aguardar até que a URL mude para a página inicial ou um elemento pós-login apareça
+        WebDriverWait(driver, 15).until(
+            EC.url_contains("instagram.com/accounts/onetap/") or # Modal de salvar informações
+            EC.url_contains("instagram.com/challenge/") or # Desafio de segurança
+            EC.presence_of_element_located((By.XPATH, "//a[@href='/']//div[@role='link']")) # Ícone da home
+        )
+        log.info("Login aparentemente bem-sucedido ou redirecionado para verificação.")
+        return True
+    except Exception as e:
+        log.error(f"Falha na verificação pós-login: {e}")
+        return False
+    finally:
+        pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="após clicar login")
 
 
 def clicar_agora_nao(driver):
@@ -91,7 +105,9 @@ def clicar_agora_nao(driver):
                 )
             )
             log.info("Botão 'Agora não' encontrado por texto. Clicando...")
-            pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="antes clicar agora não")
+            pausa(
+                min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="antes clicar agora não"
+            )
             botao_agora_nao.click()
             log.info("Botão 'Agora não' clicado com sucesso!")
             return True
