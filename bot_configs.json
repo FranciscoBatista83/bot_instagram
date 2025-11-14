@@ -1,5 +1,8 @@
 {
     "reels_per_profile": 10,
     "pause_min_profiles": 300,
-    "pause_max_profiles": 300
+    "pause_max_profiles": 300,
+    "unfollow_batch_size": 100,
+    "unfollow_pause_min": 60,
+    "unfollow_pause_max": 300
 }

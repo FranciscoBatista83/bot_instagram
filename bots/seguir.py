@@ -1,6 +1,7 @@
 import sys
 import os
 import argparse # Importar argparse para lidar com argumentos de linha de comando
+import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.browser import iniciar_driver, fazer_login, clicar_agora_nao
@@ -21,6 +22,27 @@ if __name__ == "__main__":
     usuario = args.user
     senha = args.password
     username_conta = args.username
+
+    # Carregar configurações do bot_configs.json
+    config_file = os.path.join(os.path.dirname(__file__), "..", "bot_configs.json")
+    follow_batch_size = 5  # padrão
+    follow_pause_min = 20  # 20 minutos padrão
+    follow_pause_max = 30  # 30 minutos padrão
+    follow_cycles = 10  # 10 ciclos padrão
+
+    if os.path.exists(config_file):
+        try:
+            with open(config_file, "r") as f:
+                configs = json.load(f)
+            follow_batch_size = configs.get("follow_batch_size", 5)
+            follow_pause_min = configs.get("follow_pause_min", 20)
+            follow_pause_max = configs.get("follow_pause_max", 30)
+            follow_cycles = configs.get("follow_cycles", 10)
+            log.info(f"Configurações carregadas: lote={follow_batch_size}, pausa={follow_pause_min}-{follow_pause_max}min, ciclos={follow_cycles}")
+        except Exception as e:
+            log.warning(f"Erro ao carregar configurações: {e}. Usando padrões.")
+    else:
+        log.warning("Arquivo bot_configs.json não encontrado. Usando configurações padrão.")
 
     # Arquivo específico da conta
     arquivo_seguidores = f"seguidores_{username_conta}.txt"
@@ -54,11 +76,10 @@ if __name__ == "__main__":
         else:
             log.info(f"Encontrados {len(urls_perfis_principais)} perfis principais para processar.")
 
-            num_ciclos = 10
-            log.info(f"O bot irá rodar por {num_ciclos} ciclos.")
+            log.info(f"O bot irá rodar por {follow_cycles} ciclos.")
 
-            for ciclo_atual in range(1, num_ciclos + 1):
-                log.info(f"=== INICIANDO CICLO {ciclo_atual}/{num_ciclos} ===")
+            for ciclo_atual in range(1, follow_cycles + 1):
+                log.info(f"=== INICIANDO CICLO {ciclo_atual}/{follow_cycles} ===")
 
                 url_principal = random.choice(urls_perfis_principais)
                 log.info(f"Perfil principal aleatório selecionado: {url_principal}")
@@ -71,13 +92,13 @@ if __name__ == "__main__":
                     log.warning(f"Não foi possível acessar a lista de seguidores de {url_principal}. Pulando para o próximo ciclo.")
                     continue
 
-                log.info(f"Iniciando processo de seguir 5 perfis de segundo nível de {url_principal}.")
-                seguir_perfis(driver, lote=5, pausa_entre_lotes_min=20, pausa_entre_lotes_max=30)
+                log.info(f"Iniciando processo de seguir {follow_batch_size} perfis de segundo nível de {url_principal}.")
+                seguir_perfis(driver, lote=follow_batch_size, pausa_entre_lotes_min=follow_pause_min, pausa_entre_lotes_max=follow_pause_max)
 
                 log.info(f"Ciclo {ciclo_atual} concluído. Aguardando próxima iteração.")
-                if ciclo_atual < num_ciclos:
+                if ciclo_atual < follow_cycles:
                     log.info(f"Pausa entre ciclos...")
-                    pausa(min_tempo=20 * 60, max_tempo=30 * 60, jitter=0.5, nome="entre ciclos de seguir")
+                    pausa(min_tempo=follow_pause_min * 60, max_tempo=follow_pause_max * 60, jitter=0.5, nome="entre ciclos de seguir")
 
         log.info("Processo de seguir perfis de segundo nível concluído.")
     except Exception as e:

@@ -42,7 +42,7 @@ class App(ctk.CTk):
             corner_radius=0,
             height=40,
             border_spacing=10,
-            text="Dashboard",
+            text="Painel de Controle",
             fg_color="transparent",
             text_color=("gray10", "gray90"),
             anchor="w",
