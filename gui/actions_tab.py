@@ -82,24 +82,14 @@ class ActionsTab(ctk.CTkFrame):
 
         # Obter configurações dos bots
         max_followers = 0
-        max_reels = 3  # padrão
         if hasattr(self.master, 'dashboard_frame'):
             if hasattr(self.master.dashboard_frame, 'get_max_followers_config'):
                 max_followers = self.master.dashboard_frame.get_max_followers_config()
-            if hasattr(self.master.dashboard_frame, 'get_max_reels_config'):
-                max_reels = self.master.dashboard_frame.get_max_reels_config()
 
-        # Validação obrigatória para curtir reels
-        if script_name == "curtir_reels.py" and max_reels == 0:
-            self.status_label.configure(text="Erro: Configure o máximo de reels por perfil no Dashboard!", text_color="red")
-            self.toggle_buttons_state("normal")
-            self.stop_button.configure(state="disabled")
-            return
-
-        thread = threading.Thread(target=self._execute_bot_script, args=(script_name, username, password, logged_username, max_followers, max_reels))
+        thread = threading.Thread(target=self._execute_bot_script, args=(script_name, username, password, logged_username, max_followers))
         thread.start()
 
-    def _execute_bot_script(self, script_name, username, password, logged_username, max_followers=0, max_reels=3):
+    def _execute_bot_script(self, script_name, username, password, logged_username, max_followers=0):
         try:
             script_path = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bots')), script_name)
 
@@ -109,10 +99,6 @@ class ActionsTab(ctk.CTkFrame):
             # Adicionar parâmetro específico para o bot de acessar seguidores
             if script_name == "acessar_seguidores.py" and max_followers > 0:
                 command.extend(["--max_followers", str(max_followers)])
-
-            # Adicionar parâmetro específico para o bot de curtir reels
-            if script_name == "curtir_reels.py":
-                command.extend(["--max_reels", str(max_reels)])
 
             self.current_process = subprocess.Popen(command,
                                                     stdout=subprocess.PIPE,
