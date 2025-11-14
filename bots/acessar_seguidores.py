@@ -66,12 +66,6 @@ if __name__ == "__main__":
         log.info("Extraindo URLs dos seguidores e atualizando arquivo...")
         urls_encontradas = extrair_urls_seguidores(driver)
 
-        # Aplicar limite máximo de seguidores se especificado
-        if max_followers > 0 and urls_encontradas:
-            urls_limitadas = urls_encontradas[:max_followers]
-            log.info(f"Aplicando limite: {len(urls_encontradas)} seguidores encontrados, mantendo apenas os primeiros {max_followers}")
-            urls_encontradas = urls_limitadas
-
         if urls_encontradas:
             sucesso = gerenciar_arquivo_urls(urls_encontradas, arquivo_seguidores)
             if sucesso:
