@@ -47,7 +47,7 @@ class DataTab(ctk.CTkFrame):
             file_name = f'seguidores_{username}.txt'
         else:
             # Quando não há conta logada, mostrar mensagem explicativa
-            self.data_textbox.insert(ctk.END, "📁 Sistema de Arquivos por Conta\n\n")
+            self.data_textbox.insert(ctk.END, "Sistema de Arquivos por Conta\n\n")
             self.data_textbox.insert(ctk.END, "Cada conta do Instagram possui seu próprio arquivo de seguidores:\n")
             self.data_textbox.insert(ctk.END, "• seguidores_{nome_da_conta}.txt\n\n")
             self.data_textbox.insert(ctk.END, "Para visualizar os dados:\n")
@@ -55,23 +55,23 @@ class DataTab(ctk.CTkFrame):
             self.data_textbox.insert(ctk.END, "2. Preencha usuário e senha\n")
             self.data_textbox.insert(ctk.END, "3. Clique em 'Fazer Login'\n")
             self.data_textbox.insert(ctk.END, "4. Vá para 'Ações do Bot' e clique em 'Extrair Seguidores'\n\n")
-            self.data_textbox.insert(ctk.END, "O arquivo será criado automaticamente! 🎯")
+            self.data_textbox.insert(ctk.END, "O arquivo será criado automaticamente!")
             return
 
         if os.path.exists(file_path):
             urls = ler_urls_arquivo(file_path)
             if urls:
-                self.data_textbox.insert(ctk.END, f"📄 Arquivo: {file_name}\n")
-                self.data_textbox.insert(ctk.END, f"👥 Total de perfis: {len(urls)}\n\n")
+                self.data_textbox.insert(ctk.END, f"Arquivo: {file_name}\n")
+                self.data_textbox.insert(ctk.END, f"Total de perfis: {len(urls)}\n\n")
                 for url in urls:
                     self.data_textbox.insert(ctk.END, url + "\n")
             else:
-                self.data_textbox.insert(ctk.END, f"📄 Arquivo: {file_name}\n")
-                self.data_textbox.insert(ctk.END, "📭 Nenhum perfil encontrado.\n")
+                self.data_textbox.insert(ctk.END, f"Arquivo: {file_name}\n")
+                self.data_textbox.insert(ctk.END, "Nenhum perfil encontrado.\n")
                 self.data_textbox.insert(ctk.END, "Use 'Extrair Seguidores' para popular este arquivo.\n")
         else:
-            self.data_textbox.insert(ctk.END, f"📄 Arquivo: {file_name}\n")
-            self.data_textbox.insert(ctk.END, "📭 Arquivo ainda não foi criado.\n")
+            self.data_textbox.insert(ctk.END, f"Arquivo: {file_name}\n")
+            self.data_textbox.insert(ctk.END, "Arquivo ainda não foi criado.\n")
             self.data_textbox.insert(ctk.END, "Será criado automaticamente quando você extrair seguidores desta conta.\n")
 
         self.data_textbox.configure(state="disabled")

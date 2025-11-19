@@ -1,6 +1,7 @@
 import sys
 import os
 import argparse # Importar argparse para lidar com argumentos de linha de comando
+import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.browser import iniciar_driver, fazer_login, clicar_agora_nao
@@ -19,6 +20,25 @@ if __name__ == "__main__":
     usuario = args.user
     senha = args.password
     username_conta = args.username
+
+    # Carregar configurações do bot_configs.json
+    config_file = os.path.join(os.path.dirname(__file__), "..", "bot_configs.json")
+    unfollow_batch_size = 10  # padrão
+    unfollow_pause_min = 15  # 15 minutos padrão
+    unfollow_pause_max = 30  # 30 minutos padrão
+
+    if os.path.exists(config_file):
+        try:
+            with open(config_file, "r") as f:
+                configs = json.load(f)
+            unfollow_batch_size = configs.get("unfollow_batch_size", 10)
+            unfollow_pause_min = configs.get("unfollow_pause_min", 15)
+            unfollow_pause_max = configs.get("unfollow_pause_max", 30)
+            log.info(f"Configurações carregadas: lote={unfollow_batch_size}, pausa={unfollow_pause_min}-{unfollow_pause_max}min")
+        except Exception as e:
+            log.warning(f"Erro ao carregar configurações: {e}. Usando padrões.")
+    else:
+        log.warning("Arquivo bot_configs.json não encontrado. Usando configurações padrão.")
 
     log.info(f"Iniciando o bot para deixar de seguir perfis da conta @{username_conta}...")
 
@@ -48,7 +68,10 @@ if __name__ == "__main__":
             log.error("Não foi possível acessar a lista de 'seguindo'.")
             sys.exit(1)
 
-        deixar_de_seguir_perfis(driver, lote=10)
+        deixar_de_seguir_perfis(driver,
+                              lote=unfollow_batch_size,
+                              pausa_min=unfollow_pause_min,
+                              pausa_max=unfollow_pause_max)
 
         log.info("Processo de deixar de seguir concluído.")
     except Exception as e:

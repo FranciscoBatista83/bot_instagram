@@ -59,7 +59,7 @@ def clicar_meu_perfil(driver):
                 except:
                     continue
         except Exception as e:
-            log.warning(f"Erro no método 2: {e}")
+            log.warning(f"Erro no metodo 2: {e}")
 
         # Método 3: Busca por links de perfil genéricos
         try:
@@ -104,7 +104,7 @@ def clicar_meu_perfil(driver):
         return False
 
     except Exception as e:
-        log.error(f"❌ Erro geral ao tentar acessar o perfil: {e}")
+        log.error(f"Erro geral ao tentar acessar o perfil: {e}")
         return False
 
 def clicar_seguidores(driver):
@@ -519,13 +519,13 @@ def verificar_estado_curtida(botao_curtir):
 def curtir_reel(driver):
     """Tenta curtir um reel se não estiver curtido usando JavaScript click."""
     try:
-        log.info("💖 Tentando curtir reel...")
+        log.info("Tentando curtir reel...")
         # Aguardar um pouco para o reel carregar completamente
         pausa(min_tempo=1.5, max_tempo=3.0, jitter=0.3, nome="curta")
 
         # Método 2: Procurar especificamente pela estrutura do HTML fornecida (PRIORIDADE 1)
         try:
-            log.info("🔍 Método 2: Procurando pela estrutura exata do HTML...")
+            log.info("Metodo 2: Procurando pela estrutura exata do HTML...")
 
             # Baseado no HTML fornecido, procurar pela section específica
             sections = driver.find_elements(By.CSS_SELECTOR, "section[class*='x78zum5'][class*='x1q0g3np']")
@@ -534,7 +534,7 @@ def curtir_reel(driver):
                 try:
                     # Dentro da section, procurar o botão de curtir
                     botoes_curtir = section.find_elements(By.CSS_SELECTOR, "svg[aria-label='Curtir']")
-                    log.info(f"  🎯 Encontrados {len(botoes_curtir)} SVGs de curtir na section")
+                    log.info(f"  Encontrados {len(botoes_curtir)} SVGs de curtir na section")
 
                     for svg in botoes_curtir:
                         try:
@@ -544,161 +544,161 @@ def curtir_reel(driver):
                                 botao = botao.find_element(By.XPATH, "..")
 
                             if botao and botao.get_attribute("role") == "button":
-                                log.info("    ✅ Botão de curtir encontrado na estrutura correta")
+                                log.info("    Botão de curtir encontrado na estrutura correta")
 
                                 if botao.is_displayed() and botao.is_enabled():
                                     # Verificar estado
                                     fill_attr = svg.get_attribute("fill")
-                                    log.info(f"    🎨 Atributo fill: {fill_attr}")
+                                    log.info(f"    Atributo fill: {fill_attr}")
 
                                     if fill_attr and fill_attr not in ["currentColor"]:
-                                        log.info("    ❤️ Reel já está curtido")
+                                        log.info("    Reel já está curtido")
                                         return False
                                     else:
-                                        log.info("    🤍 Curtindo reel...")
+                                        log.info("    Curtindo reel...")
                                         try:
                                             driver.execute_script("arguments[0].click();", botao)
-                                            log.info("    ✅ Clique JavaScript realizado! [MÉTODO 2 - Estrutura HTML]")
+                                            log.info("    Clique JavaScript realizado! [MÉTODO 2 - Estrutura HTML]")
                                             pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                                             return True
                                         except:
                                             driver.execute_script("arguments[0].scrollIntoView();", botao)
                                             time.sleep(0.5)
                                             driver.execute_script("arguments[0].click();", botao)
-                                            log.info("    ✅ Clique JavaScript após scroll! [MÉTODO 2 - Fallback]")
+                                            log.info("    Clique JavaScript após scroll! [MÉTODO 2 - Fallback]")
                                             pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                                             return True
                         except:
                             continue
 
                 except Exception as e:
-                    log.warning(f"  ⚠️ Erro ao processar section: {e}")
+                    log.warning(f"  Erro ao processar section: {e}")
                     continue
 
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 2: {e}")
+            log.warning(f"Erro no metodo 2: {e}")
 
         # Método 2.1: Procurar pela estrutura mais específica baseada no HTML fornecido
         try:
-            log.info("🔍 Método 2.1: Procurando pela estrutura completa do HTML fornecido...")
+            log.info("Metodo 2.1: Procurando pela estrutura completa do HTML fornecido...")
 
             # Estrutura mais específica baseada no HTML completo
             botoes_curtir = driver.find_elements(By.CSS_SELECTOR, "section[class*='x78zum5'][class*='x1q0g3np'] span[class*='x1rg5ohu'] div[class*='x1ypdohk'] div[role='button']")
 
-            log.info(f"  🎯 Encontrados {len(botoes_curtir)} botões de curtir na estrutura completa")
+            log.info(f"  Encontrados {len(botoes_curtir)} botões de curtir na estrutura completa")
 
             for botao in botoes_curtir:
                 try:
                     if botao.is_displayed() and botao.is_enabled():
-                        log.info("    ✅ Botão de curtir encontrado na estrutura completa")
+                        log.info("    Botão de curtir encontrado na estrutura completa")
 
                         # Verificar se contém SVG de curtir
                         svg_curtir = botao.find_elements(By.CSS_SELECTOR, "svg[aria-label='Curtir']")
                         if svg_curtir:
                             svg = svg_curtir[0]
                             fill_attr = svg.get_attribute("fill")
-                            log.info(f"    🎨 Atributo fill: {fill_attr}")
+                            log.info(f"    Atributo fill: {fill_attr}")
 
                             if fill_attr and fill_attr not in ["currentColor"]:
-                                log.info("    ❤️ Reel já está curtido")
+                                log.info("    Reel já está curtido")
                                 return False
                             else:
-                                log.info("    🤍 Curtindo reel...")
+                                log.info("    Curtindo reel...")
                                 try:
                                     driver.execute_script("arguments[0].click();", botao)
-                                    log.info("    ✅ Clique JavaScript realizado! [MÉTODO 2.1 - Estrutura Completa]")
+                                    log.info("    Clique JavaScript realizado! [METODO 2.1 - Estrutura Completa]")
                                     pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                                     return True
                                 except:
                                     driver.execute_script("arguments[0].scrollIntoView();", botao)
                                     time.sleep(0.5)
                                     driver.execute_script("arguments[0].click();", botao)
-                                    log.info("    ✅ Clique JavaScript após scroll! [MÉTODO 2.1 - Fallback]")
+                                    log.info("    Clique JavaScript após scroll! [METODO 2.1 - Fallback]")
                                     pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                                     return True
                 except Exception as e:
-                    log.warning(f"    ⚠️ Erro ao processar botão: {e}")
+                    log.warning(f"    Erro ao processar botão: {e}")
                     continue
 
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 2.1: {e}")
+            log.warning(f"Erro no metodo 2.1: {e}")
 
         # Método 1: Procurar especificamente por botão de curtir do reel (PRIORIDADE 2)
         try:
-            log.info("🔍 Método 1: Procurando botão de curtir...")
+            log.info("Metodo 1: Procurando botão de curtir...")
             botoes_curtir = driver.find_elements(By.CSS_SELECTOR, "svg[aria-label='Curtir']")
-            log.info(f"  🎯 Encontrados {len(botoes_curtir)} botões com aria-label='Curtir'")
+            log.info(f"  Encontrados {len(botoes_curtir)} botões com aria-label='Curtir'")
 
             for i, botao in enumerate(botoes_curtir):
                 try:
-                    log.info(f"  🎯 Verificando botão {i+1}...")
+                    log.info(f"  Verificando botão {i+1}...")
 
                     if botao.is_displayed() and botao.is_enabled():
-                        log.info("    ✅ Botão visível e habilitado")
+                        log.info("    Botão visível e habilitado")
                         # Verificar se já está curtido
                         if verificar_estado_curtida(botao):
-                            log.info("    ❤️ Reel já está curtido")
+                            log.info("    Reel já está curtido")
                             return False
                         else:
-                            log.info("    🤍 Curtindo reel...")
+                            log.info("    Curtindo reel...")
                             # Usar JavaScript click como método principal
                             try:
                                 driver.execute_script("arguments[0].click();", botao)
-                                log.info("    ✅ Clique JavaScript realizado! [MÉTODO 1 - Botão SVG direto]")
+                                log.info("    Clique JavaScript realizado! [MÉTODO 1 - Botão SVG direto]")
                                 pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                                 return True
                             except Exception as e:
-                                log.warning(f"    ❌ Erro no clique JavaScript: {e}")
+                                log.warning(f"    Erro no clique JavaScript: {e}")
                                 # Tentar scroll como último recurso
                                 try:
                                     driver.execute_script("arguments[0].scrollIntoView();", botao)
                                     time.sleep(0.5)
                                     driver.execute_script("arguments[0].click();", botao)
-                                    log.info("    ✅ Clique JavaScript após scroll! [MÉTODO 1 - Fallback com scroll]")
+                                    log.info("    Clique JavaScript após scroll! [MÉTODO 1 - Fallback com scroll]")
                                     pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                                     return True
                                 except Exception as e2:
-                                    log.warning(f"    ❌ Erro mesmo após scroll: {e2}")
+                                    log.warning(f"    Erro mesmo após scroll: {e2}")
                                     continue
                     else:
-                        log.info("    ❌ Botão não visível ou desabilitado")
+                        log.info("    Botão não visível ou desabilitado")
                 except Exception as e:
-                    log.warning(f"  ⚠️ Erro ao processar botão {i+1}: {e}")
+                    log.warning(f"  Erro ao processar botão {i+1}: {e}")
                     continue
 
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 1: {e}")
+            log.warning(f"Erro no método 1: {e}")
 
         # Método 3: Tentar clicar diretamente no SVG (PRIORIDADE 3)
         try:
-            log.info("🔍 Método 3: Tentando clicar diretamente no SVG...")
+            log.info("Metodo 3: Tentando clicar diretamente no SVG...")
             svg_curtir = driver.find_elements(By.CSS_SELECTOR, "svg[aria-label='Curtir']")
 
             for svg in svg_curtir[:1]:
                 if svg.is_displayed():
-                    log.info("  🎯 SVG de curtir encontrado, tentando clique direto...")
+                    log.info("  SVG de curtir encontrado, tentando clique direto...")
                     try:
                         driver.execute_script("arguments[0].click();", svg)
-                        log.info("  ✅ Clique JavaScript no SVG! [MÉTODO 3 - SVG direto]")
+                        log.info("  Clique JavaScript no SVG! [MÉTODO 3 - SVG direto]")
                         pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                         return True
                     except Exception as e:
-                        log.warning(f"  ❌ Erro no clique JavaScript: {e}")
+                        log.warning(f"  Erro no clique JavaScript: {e}")
                         try:
                             driver.execute_script("arguments[0].scrollIntoView();", svg)
                             time.sleep(0.5)
                             driver.execute_script("arguments[0].click();", svg)
-                            log.info("  ✅ Clique JavaScript no SVG após scroll! [MÉTODO 3 - Fallback com scroll]")
+                            log.info("  Clique JavaScript no SVG após scroll! [MÉTODO 3 - Fallback com scroll]")
                             pausa(min_tempo=0.2, max_tempo=0.8, jitter=0.1, nome="muito curta")
                             return True
                         except Exception as e2:
-                            log.warning(f"  ❌ Erro mesmo após scroll: {e2}")
+                            log.warning(f"  Erro mesmo após scroll: {e2}")
                             continue
 
         except Exception as e:
-            log.warning(f"⚠️ Erro no método 3: {e}")
+            log.warning(f"Erro no método 3: {e}")
 
-        log.info("❌ Nenhum botão de curtir encontrado ou reel já curtido.")
+        log.info("Nenhum botão de curtir encontrado ou reel já curtido.")
         return False
 
     except Exception as e:
@@ -712,12 +712,12 @@ def clicar_seguindo(driver):
         pausa(min_tempo=8, max_tempo=15, jitter=0.5, nome="carregar perfil seguindo")
 
         wait = WebDriverWait(driver, 15)
-        
+
         # Tenta encontrar o link que contém 'seguindo' no texto.
         contador_seguindo = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'seguindo')]")))
         log.info("Contador de 'seguindo' encontrado. Clicando...")
         contador_seguindo.click()
-        
+
         log.info("Lista de 'seguindo' acessada com sucesso!")
         pausa(min_tempo=4, max_tempo=8, jitter=0.3, nome="após clicar seguindo")
         return True
@@ -725,15 +725,116 @@ def clicar_seguindo(driver):
         log.error(f"Erro ao clicar em 'seguindo': {e}")
         return False
 
-def deixar_de_seguir_perfis(driver, lote=10):
+def carregar_mais_perfis_seguindo(driver, min_perfis=50, max_scroll_attempts=20):
+    """Faz scroll inteligente na lista de 'seguindo' para carregar mais perfis.
+
+    Args:
+        driver: Instância do webdriver
+        min_perfis: Número mínimo de perfis a carregar antes de parar (padrão: 50)
+        max_scroll_attempts: Máximo de tentativas de scroll (padrão: 20)
+
+    Returns:
+        int: Número total de perfis carregados
+    """
+    try:
+        log.info(f"Iniciando carregamento inteligente de perfis (mínimo: {min_perfis})...")
+
+        perfis_carregados = 0
+        scroll_attempts = 0
+        previous_height = 0
+        same_height_count = 0
+
+        # Aguardar lista inicial carregar
+        pausa(min_tempo=2, max_tempo=4, jitter=0.3, nome="aguardar lista inicial")
+
+        while scroll_attempts < max_scroll_attempts:
+            scroll_attempts += 1
+
+            # Verificar quantos perfis já estão carregados
+            botoes_seguindo = driver.find_elements(By.XPATH, "//button[div/div[contains(text(), 'Seguindo')]]")
+            perfis_atual = len(botoes_seguindo)
+
+            log.info(f"Scroll {scroll_attempts}: {perfis_atual} perfis carregados")
+
+            # Se atingiu o mínimo desejado, podemos parar
+            if perfis_atual >= min_perfis:
+                log.info(f"Atingido mínimo de {min_perfis} perfis. Parando carregamento.")
+                break
+
+            # Fazer scroll progressivo para o final
+            try:
+                # Primeiro, tentar rolar lentamente
+                scroll_height = driver.execute_script("return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);")
+                scroll_position = driver.execute_script("return Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop);")
+
+                # Calcular nova posição (75% da altura atual para scroll gradual)
+                new_position = scroll_position + (scroll_height - scroll_position) * 0.75
+
+                # Fazer scroll gradual
+                driver.execute_script(f"window.scrollTo(0, {new_position});")
+                pausa(min_tempo=1, max_tempo=2, jitter=0.2, nome="scroll gradual")
+
+                # Depois, scroll completo para o final
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                pausa(min_tempo=2, max_tempo=4, jitter=0.3, nome="scroll completo")
+
+            except Exception as e:
+                log.warning(f"Erro no scroll {scroll_attempts}: {e}")
+                continue
+
+            # Aguardar carregamento
+            pausa(min_tempo=3, max_tempo=5, jitter=0.4, nome="aguardar carregamento")
+
+            # Verificar se carregou mais perfis
+            botoes_seguindo_novos = driver.find_elements(By.XPATH, "//button[div/div[contains(text(), 'Seguindo')]]")
+            perfis_novo = len(botoes_seguindo_novos)
+
+            if perfis_novo > perfis_atual:
+                log.info(f"[CARREGADO] Carregados {perfis_novo - perfis_atual} perfis adicionais (total: {perfis_novo})")
+                perfis_carregados = perfis_novo
+                same_height_count = 0
+            else:
+                same_height_count += 1
+                log.info(f"[SEM NOVOS PERFIS] Nenhum perfil adicional carregado (contador: {same_height_count})")
+
+                # Se não carregou perfis por 3 scrolls consecutivos, parar
+                if same_height_count >= 3:
+                    log.info("Não foi possível carregar mais perfis. Parando carregamento.")
+                    break
+
+            # Limitar para não exceder tentativas
+            if scroll_attempts >= max_scroll_attempts:
+                log.info(f"Atingido limite máximo de {max_scroll_attempts} scrolls.")
+
+        botoes_finais = driver.find_elements(By.XPATH, "//button[div/div[contains(text(), 'Seguindo')]]")
+        total_final = len(botoes_finais)
+
+        log.info(f"Carregamento concluído. Total de perfis carregados: {total_final}")
+        return total_final
+
+    except Exception as e:
+        log.error(f"Erro geral no carregamento de perfis: {e}")
+        return 0
+
+def deixar_de_seguir_perfis(driver, lote=10, pausa_min=15, pausa_max=30):
     """Deixa de seguir perfis em lotes controlados com pausas entre execuções.
 
     Args:
         driver: Instância do webdriver
         lote: Quantidade de perfis para deixar de seguir por execução (padrão: 10)
+        pausa_min: Tempo mínimo de pausa entre lotes em minutos (padrão: 15)
+        pausa_max: Tempo máximo de pausa entre lotes em minutos (padrão: 30)
     """
     try:
-        log.info(f"Iniciando processo de unfollow em lotes de {lote} perfis com pausa de 15-30 minutos entre lotes.")
+        log.info(f"Iniciando processo de unfollow em lotes de {lote} perfis com pausa de {pausa_min}-{pausa_max} minutos entre lotes.")
+
+        # Carregar mais perfis na lista de seguindo antes de começar
+        perfis_carregados = carregar_mais_perfis_seguindo(driver, min_perfis=max(lote * 3, 30))
+        if perfis_carregados > 0:
+            log.info(f"Pré-carregados {perfis_carregados} perfis para processamento.")
+        else:
+            log.warning("Nenhum perfil pôde ser carregado. Continuando com o processamento padrão.")
+
         lote_atual = 0
         total_perfis_deixados_de_seguir = 0
 
@@ -742,14 +843,6 @@ def deixar_de_seguir_perfis(driver, lote=10):
             perfis_deixados_de_seguir_lote = 0
 
             log.info(f"=== LOTE {lote_atual} - Buscando perfis para deixar de seguir ===")
-
-            # Tentar fazer scroll para carregar mais perfis se necessário
-            try:
-                # Scroll down para carregar mais perfis
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                pausa(min_tempo=2, max_tempo=4, jitter=0.2, nome="scroll carregar mais perfis")
-            except:
-                pass
 
             # Encontra todos os botões "Seguindo" visíveis
             botoes_seguindo = driver.find_elements(By.XPATH, "//button[div/div[contains(text(), 'Seguindo')]]")
@@ -799,11 +892,11 @@ def deixar_de_seguir_perfis(driver, lote=10):
 
             # Se ainda há perfis para processar, aguarda antes do próximo lote
             if perfis_deixados_de_seguir_lote >= lote:
-                log.info("⏰ Aguardando 15-30 minutos antes do próximo lote...")
-                pausa(min_tempo=900, max_tempo=1800, jitter=30, nome="pausa entre lotes")
-                log.info(f"⏰ Pausa concluída. Iniciando lote {lote_atual + 1}...")
+                log.info(f"Aguardando {pausa_min}-{pausa_max} minutos antes do próximo lote...")
+                pausa(min_tempo=pausa_min * 60, max_tempo=pausa_max * 60, jitter=30, nome="pausa entre lotes")
+                log.info(f"Pausa concluída. Iniciando lote {lote_atual + 1}...")
 
-        log.info(f"🎉 Processo de unfollow completamente concluído! Total de perfis deixados de seguir: {total_perfis_deixados_de_seguir}")
+        log.info(f"Processo de unfollow completamente concluído! Total de perfis deixados de seguir: {total_perfis_deixados_de_seguir}")
         return True
 
     except Exception as e:
@@ -888,11 +981,11 @@ def seguir_perfis(driver, lote=5, pausa_entre_lotes_min=15, pausa_entre_lotes_ma
 
             # Se ainda há perfis para processar, aguarda antes do próximo lote
             if perfis_seguidos_lote >= lote:
-                log.info(f"⏰ Aguardando {pausa_entre_lotes_min}-{pausa_entre_lotes_max} minutos antes do próximo lote...")
+                log.info(f"Aguardando {pausa_entre_lotes_min}-{pausa_entre_lotes_max} minutos antes do próximo lote...")
                 pausa(min_tempo=pausa_entre_lotes_min * 60, max_tempo=pausa_entre_lotes_max * 60, jitter=30, nome="pausa entre lotes de seguir")
-                log.info(f"⏰ Pausa concluída. Iniciando lote {lote_atual + 1}...")
+                log.info(f"Pausa concluída. Iniciando lote {lote_atual + 1}...")
 
-        log.info(f"🎉 Processo de seguir perfis completamente concluído! Total de perfis seguidos: {total_perfis_seguidos}")
+        log.info(f"Processo de seguir perfis completamente concluído! Total de perfis seguidos: {total_perfis_seguidos}")
         return True
 
     except Exception as e:

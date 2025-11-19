@@ -23,23 +23,23 @@ def curtir_reels_perfil(driver, max_reels=3):
         int: Número de reels efetivamente curtidos
     """
     try:
-        log.info(f"🎬 Procurando até {max_reels} reels neste perfil...")
+        log.info(f"Procurando ate {max_reels} reels neste perfil...")
 
         # Encontrar reels disponíveis no perfil
         reels_encontrados = encontrar_reels_perfil(driver, max_reels)
 
         if not reels_encontrados:
-            log.info("📭 Nenhum reel encontrado neste perfil.")
+            log.info("Nenhum reel encontrado neste perfil.")
             return 0
 
-        log.info(f"🎯 Encontrados {len(reels_encontrados)} reels. Curtindo até {max_reels}...")
+        log.info(f"Encontrados {len(reels_encontrados)} reels. Curtindo ate {max_reels}...")
 
         reels_curtidos = 0
 
         # Curtir cada reel encontrado (até o limite)
         for i, reel in enumerate(reels_encontrados[:max_reels]):
             try:
-                log.info(f"🎬 Clicando no reel {i+1}/{min(max_reels, len(reels_encontrados))}")
+                log.info(f"Clicando no reel {i+1}/{min(max_reels, len(reels_encontrados))}")
 
                 # Clicar no reel
                 reel.click()
@@ -48,9 +48,9 @@ def curtir_reels_perfil(driver, max_reels=3):
                 # Tentar curtir o reel
                 if curtir_reel(driver):
                     reels_curtidos += 1
-                    log.info(f"✅ Reel {i+1} curtido com sucesso!")
+                    log.info(f"Reel {i+1} curtido com sucesso!")
                 else:
-                    log.info(f"⏭️ Reel {i+1} já estava curtido ou não foi possível curtir.")
+                    log.info(f"Reel {i+1} ja estava curtido ou nao foi possivel curtir.")
 
                 # Voltar para o perfil (fechar o reel)
                 try:
@@ -70,7 +70,7 @@ def curtir_reels_perfil(driver, max_reels=3):
                 log.warning(f"Erro ao processar reel {i+1}: {e}")
                 continue
 
-        log.info(f"📊 Total: {reels_curtidos} reels curtidos neste perfil.")
+        log.info(f"Total: {reels_curtidos} reels curtidos neste perfil.")
         return reels_curtidos
 
     except Exception as e:
@@ -157,7 +157,7 @@ if __name__ == "__main__":
                 url_perfil = random.choice(urls_perfis)
                 perfis_processados += 1
 
-                log.info(f"🎯 Processando perfil {perfis_processados}: {url_perfil}")
+                log.info(f"Processando perfil {perfis_processados}: {url_perfil}")
 
                 # Navegar para o perfil
                 driver.get(url_perfil)
@@ -167,10 +167,10 @@ if __name__ == "__main__":
                 reels_curtidos = curtir_reels_perfil(driver, reels_per_profile)
                 reels_curtidos_total += reels_curtidos
 
-                log.info(f"📊 Status: {reels_curtidos} reels curtidos neste perfil (total: {reels_curtidos_total})")
+                log.info(f"Status: {reels_curtidos} reels curtidos neste perfil (total: {reels_curtidos_total})")
 
                 # Pausa configurável entre perfis
-                log.info(f"⏰ Aguardando {pause_min_profiles}-{pause_max_profiles} segundos antes do próximo perfil...")
+                log.info(f"Aguardando {pause_min_profiles}-{pause_max_profiles} segundos antes do proximo perfil...")
                 pausa(min_tempo=pause_min_profiles, max_tempo=pause_max_profiles, jitter=2, nome="entre perfis")
 
             except KeyboardInterrupt:
@@ -182,7 +182,7 @@ if __name__ == "__main__":
                 pausa(min_tempo=30, max_tempo=60, jitter=5, nome="erro processamento")
                 continue
 
-        log.info(f"🎉 Processo finalizado! {perfis_processados} perfis processados, {reels_curtidos_total} reels curtidos.")
+        log.info(f"Processo finalizado! {perfis_processados} perfis processados, {reels_curtidos_total} reels curtidos.")
     except Exception as e:
         log.error(f"Ocorreu um erro durante a execução: {e}")
         sys.exit(1)

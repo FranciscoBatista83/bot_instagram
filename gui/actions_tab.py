@@ -36,19 +36,19 @@ class ActionsTab(ctk.CTkFrame):
         self.logged_username_var.trace_add("write", self.update_account_label)
 
         # Botões para cada ação
-        self.extract_followers_button = ctk.CTkButton(self, text="🔍 Extrair Seguidores", command=lambda: self.run_bot("acessar_seguidores.py"))
+        self.extract_followers_button = ctk.CTkButton(self, text="Extrair Seguidores", command=lambda: self.run_bot("acessar_seguidores.py"))
         self.extract_followers_button.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
 
-        self.follow_profiles_button = ctk.CTkButton(self, text="👥 Seguir Perfis", command=lambda: self.run_bot("seguir.py"))
+        self.follow_profiles_button = ctk.CTkButton(self, text="Seguir Perfis", command=lambda: self.run_bot("seguir.py"))
         self.follow_profiles_button.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
 
-        self.like_reels_button = ctk.CTkButton(self, text="🎬 Curtir Reels", command=lambda: self.run_bot("curtir_reels.py"))
+        self.like_reels_button = ctk.CTkButton(self, text="Curtir Reels", command=lambda: self.run_bot("curtir_reels.py"))
         self.like_reels_button.grid(row=4, column=0, padx=20, pady=10, sticky="ew")
 
-        self.unfollow_profiles_button = ctk.CTkButton(self, text="🚫 Deixar de Seguir", command=lambda: self.run_bot("deixar_de_seguir.py"))
+        self.unfollow_profiles_button = ctk.CTkButton(self, text="Deixar de Seguir", command=lambda: self.run_bot("deixar_de_seguir.py"))
         self.unfollow_profiles_button.grid(row=5, column=0, padx=20, pady=10, sticky="ew")
 
-        self.stop_button = ctk.CTkButton(self, text="🛑 Parar Execução", command=self.stop_bot, fg_color="red", state="disabled")
+        self.stop_button = ctk.CTkButton(self, text="Parar Execucao", command=self.stop_bot, fg_color="red", state="disabled")
         self.stop_button.grid(row=6, column=0, padx=20, pady=10, sticky="ew")
 
     def update_account_label(self, *args):
@@ -106,7 +106,7 @@ class ActionsTab(ctk.CTkFrame):
                                                     text=True,
                                                     bufsize=1,
                                                     universal_newlines=True)
-            
+
             def read_output(pipe, is_stderr=False):
                 for line in iter(pipe.readline, ''):
                     self.after(0, lambda l=line: self.logs_tab.log_textbox.configure(state="normal"))
